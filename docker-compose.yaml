@@ -1,0 +1,36 @@
+version: '3'
+services:
+  web:
+    build: ./todo
+    ports: 
+      - 8009:8000
+    depends_on:
+      - rabbitmq
+      - notif
+    networks:
+      - app_network
+  
+  notif:
+    build: ./notif
+    ports:
+      - 8008:5001
+    depends_on:
+      - rabbitmq
+    networks:
+      - app_network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - app_network
+    
+networks:
+    app_network:
+        driver: bridge
